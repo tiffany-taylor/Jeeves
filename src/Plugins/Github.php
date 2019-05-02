@@ -118,7 +118,7 @@ class Github extends BasePlugin
     {
         return $this->chatClient->postMessage(
             $target,
-            '[tag:github-status] status.github.com seems to be unreachable.'
+            '[tag:github-status] https://www.githubstatus.com/ seems to be unreachable.'
         );
     }
 
@@ -179,14 +179,14 @@ class Github extends BasePlugin
             return $this->chatClient->postMessage($target, 'Failed fetching status');
         }
 
-        $messageTemplate = '[%s *as of %s*](https://status.github.com/messages)';
+        $messageTemplate = '[%s *as of %s*](https://www.githubstatus.com)';
 
         return $this->chatClient->postMessage(
             $target,
             sprintf(
                 "[tag:github-status] **%s**: " . $messageTemplate,
                 $response->status,
-                rtrim($response->body, '.!?'),
+                rtrim($response->description, '.!?'),
                 $response->created_on
             )
         );
@@ -196,7 +196,7 @@ class Github extends BasePlugin
     {
         return resolve(function() {
             /** @var HttpResponse $response */
-            $response = yield $this->httpClient->request('https://status.github.com/api/last-message.json');
+            $response = yield $this->httpClient->request('https://kctbh9vrtdwd.statuspage.io/api/v2/status.json');
 
             if ($response->getStatus() !== 200) {
                 throw new GithubStatusUnfetchableException('Request responded with code ' . $response->getStatus());
